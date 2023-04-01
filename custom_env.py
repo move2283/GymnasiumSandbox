@@ -2,7 +2,6 @@ import gymnasium as gym
 from gymnasium import Env, spaces
 import numpy as np
 
-
 class CustomEnv(Env):
     def __init__(self):
         self.action_space = spaces.Discrete(2)
@@ -27,25 +26,34 @@ class CustomEnv(Env):
     def seed(self, seed=None):
         self.np_random, _ = gym.utils.seeding.np_random(seed)
 
+class CustomEnvRunner:
+    def __init__(self, env_id="CustomEnv-v0", max_episode_steps=10):
+        gym.register(
+            id=env_id,
+            entry_point=CustomEnv,
+            max_episode_steps=max_episode_steps,
+            order_enforce=True,
+        )
+        self.env = gym.make(env_id)
 
-gym.register(
-    id="CustomEnv-v0",
-    entry_point=CustomEnv,
-    max_episode_steps=10,
-    order_enforce=True,
-)
+    def run(self, num_episodes=1):
+        env_spec = gym.spec(self.env.spec.id)
+        print(f"Environment spec: {env_spec}")
+        gym.pprint_registry()
 
-env = gym.make("CustomEnv-v0")
+        for episode in range(num_episodes):
+            print(f"Episode: {episode + 1}")
+            observation, info = self.env.reset()
+            for _ in range(10):
+                action = self.env.action_space.sample()
+                observation, reward, terminated, truncated, info = self.env.step(action)
+                print(f"Observation: {observation}, Reward: {reward}")
+                if terminated or truncated:
+                    break
 
-env_spec = gym.spec("CustomEnv-v0")
-print(f"Environment spec: {env_spec}")
+    def close(self):
+        self.env.close()
 
-gym.pprint_registry()
-
-observation, info = env.reset()
-for _ in range(10):
-    action = env.action_space.sample()
-    observation, reward, terminated, truncated, info = env.step(action)
-    print(f"Observation: {observation}, Reward: {reward}")
-
-env.close()
+runner = CustomEnvRunner()
+runner.run()
+runner.close()
