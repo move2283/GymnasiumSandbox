@@ -24,6 +24,13 @@ for _ in range(1000):
     # 执行动作，获取新的观察、奖励和环境状态
     observation, reward, terminated, truncated, info = env.step(action)
 
+    # 打印step()方法返回的信息
+    print(f"Observation: {observation}")
+    print(f"Reward: {reward}")
+    print(f"Terminated: {terminated}")
+    print(f"Truncated: {truncated}")
+    print(f"Info: {info}")
+
     # 如果环境终止或截断，重置环境
     if terminated or truncated:
         observation, info = env.reset()
