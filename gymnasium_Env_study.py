@@ -9,9 +9,12 @@ class LunarLanderSimulator:
     def print_env_info(self):
         print("Action space:", self.env.action_space)
         print("Observation space:", self.env.observation_space)
+        print("Observation space high:", self.env.observation_space.high)
+        print("Observation space low:", self.env.observation_space.low)
         print("Reward range:", self.env.reward_range)
         print("Environment spec:", self.env.spec)
         print("Environment metadata:", self.env.metadata)
+        print("Environment render mode:", self.env.render_mode)
 
     def reset(self, seed=None, options=None):
         if seed is not None:
