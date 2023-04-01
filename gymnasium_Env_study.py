@@ -2,7 +2,7 @@ import gymnasium as gym
 
 class LunarLanderSimulator:
     def __init__(self, seed=42):
-        self.env = gym.make("LunarLander-v2", render_mode="human")
+        self.env = gym.make("LunarLander-v2", render_mode="human")  # 当render_mode为"human"时，环境会在每次调用step()方法时自动渲染。因此，在这个特定的情况下，不需要显式调用env.render()。
         self.env.action_space.seed(seed)
         self.seed = seed
 
