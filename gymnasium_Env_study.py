@@ -1,8 +1,8 @@
 import gymnasium as gym
 
 class LunarLanderSimulator:
-    def __init__(self, seed=42):
-        self.env = gym.make("LunarLander-v2", render_mode="human")  # 当render_mode为"human"时，环境会在每次调用step()方法时自动渲染。因此，在这个特定的情况下，不需要显式调用env.render()。
+    def __init__(self, seed=42, render_mode=None):
+        self.env = gym.make("LunarLander-v2", render_mode=render_mode)  # 当render_mode为"human"时，环境会在每次调用step()方法时自动渲染。因此，在这个特定的情况下，不需要显式调用env.render()。
         self.env.action_space.seed(seed)
         self.seed = seed
 
@@ -35,12 +35,21 @@ class LunarLanderSimulator:
             if terminated or truncated:
                 observation, info = self.reset()
 
+            self.render()
+
+    def render(self):
+        """
+         render() 函数不是用于弹出窗口实时渲染可视化的；如果以渲染为目的，只需要设置为human就好了；调用render()是为了获取特定格式的返回数组
+        :return:
+        """
+        return self.env.render()
+
     def close(self):
         self.env.close()
 
 
 if __name__ == "__main__":
-    simulator = LunarLanderSimulator()
+    simulator = LunarLanderSimulator(render_mode="human")
     simulator.print_env_info()
     simulator.run_simulation()
     simulator.close()
