@@ -15,6 +15,10 @@ class LunarLanderSimulator:
         print("Environment spec:", self.env.spec)
         print("Environment metadata:", self.env.metadata)
         print("Environment render mode:", self.env.render_mode)
+        print("Environment np_random:", self.env.np_random)
+
+    def get_unwrapped_env(self):
+        return self.env.unwrapped
 
     def reset(self, seed=None, options=None):
         if seed is not None:
@@ -41,10 +45,6 @@ class LunarLanderSimulator:
             self.render()
 
     def render(self):
-        """
-         render() 函数不是用于弹出窗口实时渲染可视化的；如果以渲染为目的，只需要设置为human就好了；调用render()是为了获取特定格式的返回数组
-        :return:
-        """
         return self.env.render()
 
     def close(self):
@@ -55,4 +55,6 @@ if __name__ == "__main__":
     simulator = LunarLanderSimulator(render_mode="human")
     simulator.print_env_info()
     simulator.run_simulation()
+    unwrapped_env = simulator.get_unwrapped_env()
+    print("Unwrapped environment:", unwrapped_env)
     simulator.close()
