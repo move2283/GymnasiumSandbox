@@ -13,8 +13,10 @@ class LunarLanderSimulator:
         print("Environment spec:", self.env.spec)
         print("Environment metadata:", self.env.metadata)
 
-    def reset(self):
-        observation, info = self.env.reset(seed=self.seed)
+    def reset(self, seed=None, options=None):
+        if seed is not None:
+            self.seed = seed
+        observation, info = self.env.reset(seed=self.seed, options=options)
         return observation, info
 
     def run_simulation(self, num_steps=1000):
