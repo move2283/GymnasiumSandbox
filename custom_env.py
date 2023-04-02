@@ -33,6 +33,10 @@ class CustomEnvRunner:
             entry_point=CustomEnv,
             max_episode_steps=max_episode_steps,
             order_enforce=True,
+            autoreset=True,
+            disable_env_checker=False,
+            reward_threshold=10,
+            nondeterministic=True,
         )
         self.env = gym.make(env_id)
 
