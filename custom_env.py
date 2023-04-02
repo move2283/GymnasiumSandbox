@@ -27,8 +27,8 @@ class CustomEnv(Env):
         self.np_random, _ = gym.utils.seeding.np_random(seed)
 
 class CustomEnvRunner:
-    def __init__(self, env_id="CustomEnv-v0", max_episode_steps=10):
-        with gym.envs.registration.namespace(None):
+    def __init__(self, env_id="custom/CustomEnv-v0", max_episode_steps=10):
+        with gym.envs.registration.namespace('custom'):
             gym.register(
                 id=env_id,
                 entry_point=CustomEnv,
