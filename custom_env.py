@@ -28,22 +28,31 @@ class CustomEnv(Env):
 
 class CustomEnvRunner:
     def __init__(self, env_id="CustomEnv-v0", max_episode_steps=10):
-        gym.register(
-            id=env_id,
-            entry_point=CustomEnv,
-            max_episode_steps=max_episode_steps,
-            order_enforce=True,
-            autoreset=True,
-            disable_env_checker=False,
-            reward_threshold=10,
-            nondeterministic=True,
-        )
+        with gym.envs.registration.namespace(None):
+            gym.register(
+                id=env_id,
+                entry_point=CustomEnv,
+                max_episode_steps=max_episode_steps,
+                order_enforce=True,
+                autoreset=True,
+                disable_env_checker=False,
+                reward_threshold=10,
+                nondeterministic=True,
+            )
         self.env = gym.make(env_id)
 
     def run(self, num_episodes=1):
         env_spec = gym.spec(self.env.spec.id)
         print(f"Environment spec: {env_spec}")
         gym.pprint_registry()
+
+        # Using get_env_id, parse_env_id and find_highest_version functions
+        env_id = gym.envs.registration.get_env_id('custom', 'CustomEnv', 0)
+        print(f"Constructed environment id: {env_id}")
+        ns, name, version = gym.envs.registration.parse_env_id(env_id)
+        print(f"Parsed environment id: Namespace: {ns}, Name: {name}, Version: {version}")
+        highest_version = gym.envs.registration.find_highest_version(ns, name)
+        print(f"Highest registered version: {highest_version}")
 
         for episode in range(num_episodes):
             print(f"Episode: {episode + 1}")
