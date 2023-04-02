@@ -5,6 +5,20 @@ class MyEnvironment:
     def __init__(self):
         self.action_space = spaces.Discrete(3)
         self.observation_space = spaces.Box(0, 1, shape=(2,))
+        self.additional_spaces()
+
+    def additional_spaces(self):
+        self.multi_binary_space = spaces.MultiBinary(4)
+        self.multi_discrete_space = spaces.MultiDiscrete([2, 3, 4])
+        self.text_space = spaces.Text(max_length=100)
+        self.dict_space = spaces.Dict({
+            "action": self.action_space,
+            "observation": self.observation_space,
+            "multi_binary": self.multi_binary_space,
+            "multi_discrete": self.multi_discrete_space,
+            "text": self.text_space
+        })
+        self.tuple_space = spaces.Tuple((self.action_space, self.observation_space))
 
     def sample_action(self):
         return self.action_space.sample()
