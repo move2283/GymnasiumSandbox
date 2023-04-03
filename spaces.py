@@ -44,6 +44,14 @@ class MyEnvironment:
         # Add Sequence spaces
         self.sequence_space_1 = spaces.Sequence(spaces.Box(0, 1), seed=2)
         self.sequence_space_2 = spaces.Sequence(spaces.Box(0, 1), seed=0, stack=True)
+        self.sequence_space_3 = spaces.Sequence(spaces.Discrete(10), seed=42)
+        self.sequence_space_4 = spaces.Sequence(spaces.MultiBinary(4), seed=42)
+        self.sequence_space_5 = spaces.Sequence(spaces.Dict({"a": spaces.Discrete(2), "b": spaces.Box(-1, 1, shape=(1,))}), seed=42)
+        self.sequence_space_6 = spaces.Sequence(spaces.Tuple((spaces.Discrete(2), spaces.Box(-1, 1, shape=(2,)))), seed=42)
+        self.sequence_space_7 = spaces.Sequence(spaces.Text(min_length=1, max_length=5, charset=string.ascii_letters), seed=42)
+        self.sequence_space_8 = spaces.Sequence(spaces.MultiDiscrete([5, 2]), seed=42, stack=True)
+        self.sequence_space_9 = spaces.Sequence(spaces.Box(0, 1), seed=42, stack=True)
+        self.sequence_space_10 = spaces.Sequence(spaces.Discrete(10), seed=42)
 
     def print_info(self, space_name):
         space = getattr(self, space_name)
@@ -57,11 +65,18 @@ class MyEnvironment:
             is_bounded = space.is_bounded()
             print(f"Is {space_name} bounded? {is_bounded}")
 
-        if isinstance(space, spaces.Sequence) and space_name == "sequence_space_1":
+        if isinstance(space, spaces.Sequence):
+            # Generate variable-length samples
+            mask = (None, None)
+            samples_variable = [space.sample(mask=mask) for _ in range(10)]
+
+            # Generate fixed-length samples
             fixed_length = 3
-            fixed_length_mask = (fixed_length, None)
-            samples = [space.sample(mask=fixed_length_mask) for _ in range(10)]
-            print(f"10 fixed-length ({fixed_length}) samples from {space_name}: {samples}")
+            mask_fixed_length = (fixed_length, None)
+            samples_fixed_length = [space.sample(mask=mask_fixed_length) for _ in range(10)]
+
+            print(f"10 variable-length samples from {space_name}: {samples_variable}")
+            print(f"10 fixed-length ({fixed_length}) samples from {space_name}: {samples_fixed_length}")
         else:
             print(f"10 samples from {space_name}: {samples}")
 
