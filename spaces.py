@@ -8,6 +8,8 @@ class MyEnvironment:
         self.discrete_space = spaces.Discrete(3, start=-1, seed=42)
         self.box_space_1 = spaces.Box(low=-1.0, high=2.0, shape=(3, 4), dtype=np.float64)
         self.box_space_2 = spaces.Box(low=np.array([-1.0, -2.0]), high=np.array([2.0, 4.0]), dtype=np.float64)
+        self.multibinary_space_1 = spaces.MultiBinary(5, seed=42)
+        self.multibinary_space_2 = spaces.MultiBinary([3, 2], seed=42)
 
 def print_info(env, space_name):
     space = getattr(env, space_name)
@@ -25,6 +27,6 @@ def print_info(env, space_name):
 if __name__ == "__main__":
     env = MyEnvironment()
 
-    for space_name in ["action_space", "observation_space", "discrete_space", "box_space_1", "box_space_2"]:
+    for space_name in ["action_space", "observation_space", "discrete_space", "box_space_1", "box_space_2", "multibinary_space_1", "multibinary_space_2"]:
         print_info(env, space_name)
         print()
