@@ -13,22 +13,24 @@ class MyEnvironment:
         self.multidiscrete_space_1 = spaces.MultiDiscrete([5, 2, 2], seed=42)
         self.multidiscrete_space_2 = spaces.MultiDiscrete(np.array([[1, 2], [3, 4]]), seed=42)
 
-def print_info(env, space_name):
-    space = getattr(env, space_name)
-    samples = [space.sample() for _ in range(10)]
-    print(f"10 samples from {space_name}: {samples}")
+    def print_info(self, space_name):
+        space = getattr(self, space_name)
+        samples = [space.sample() for _ in range(10)]
+        print(f"10 samples from {space_name}: {samples}")
 
-    if space_name in ["action_space", "observation_space", "discrete_space"]:
-        is_valid = [space.contains(sample) for sample in samples]
-        print(f"Are {space_name[:-6]} samples valid? {is_valid}")
+        if space_name in ["action_space", "observation_space", "discrete_space"]:
+            is_valid = [space.contains(sample) for sample in samples]
+            print(f"Are {space_name[:-6]} samples valid? {is_valid}")
 
-    if isinstance(space, spaces.Box):
-        is_bounded = space.is_bounded()
-        print(f"Is {space_name} bounded? {is_bounded}")
+        if isinstance(space, spaces.Box):
+            is_bounded = space.is_bounded()
+            print(f"Is {space_name} bounded? {is_bounded}")
 
 if __name__ == "__main__":
     env = MyEnvironment()
 
-    for space_name in ["action_space", "observation_space", "discrete_space", "box_space_1", "box_space_2", "multibinary_space_1", "multibinary_space_2", "multidiscrete_space_1", "multidiscrete_space_2"]:
-        print_info(env, space_name)
-        print()
+    for space_name, space in vars(env).items():
+        if isinstance(space, spaces.Space):
+            env.print_info(space_name)
+            print()
+
