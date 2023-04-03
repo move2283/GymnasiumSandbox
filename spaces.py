@@ -1,5 +1,6 @@
 import numpy as np
-from gymnasium import spaces
+from gym import spaces
+import string  # Add this import
 
 class MyEnvironment:
     def __init__(self):
@@ -12,6 +13,8 @@ class MyEnvironment:
         self.multibinary_space_2 = spaces.MultiBinary([3, 2], seed=42)
         self.multidiscrete_space_1 = spaces.MultiDiscrete([5, 2, 2], seed=42)
         self.multidiscrete_space_2 = spaces.MultiDiscrete(np.array([[1, 2], [3, 4]]), seed=42)
+        self.text_space_1 = spaces.Text(max_length=5, seed=42)  # Add this instance
+        self.text_space_2 = spaces.Text(min_length=1, max_length=10, charset=string.digits, seed=42)  # Add this instance
 
     def print_info(self, space_name):
         space = getattr(self, space_name)
@@ -33,4 +36,3 @@ if __name__ == "__main__":
         if isinstance(space, spaces.Space):
             env.print_info(space_name)
             print()
-
