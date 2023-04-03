@@ -41,10 +41,13 @@ class MyEnvironment:
         self.tuple_space_1 = spaces.Tuple((spaces.Discrete(2), spaces.Box(-1, 1, shape=(2,))), seed=42)
         self.tuple_space_2 = spaces.Tuple((spaces.MultiBinary(3), spaces.MultiDiscrete([5, 2, 2])), seed=42)
 
+        # Add Sequence spaces
+        self.sequence_space_1 = spaces.Sequence(spaces.Box(0, 1), seed=2)
+        self.sequence_space_2 = spaces.Sequence(spaces.Box(0, 1), seed=0, stack=True)
+
     def print_info(self, space_name):
         space = getattr(self, space_name)
         samples = [space.sample() for _ in range(10)]
-        print(f"10 samples from {space_name}: {samples}")
 
         if space_name in ["action_space", "observation_space", "discrete_space"]:
             is_valid = [space.contains(sample) for sample in samples]
@@ -53,6 +56,14 @@ class MyEnvironment:
         if isinstance(space, spaces.Box):
             is_bounded = space.is_bounded()
             print(f"Is {space_name} bounded? {is_bounded}")
+
+        if isinstance(space, spaces.Sequence) and space_name == "sequence_space_1":
+            fixed_length = 3
+            fixed_length_mask = (fixed_length, None)
+            samples = [space.sample(mask=fixed_length_mask) for _ in range(10)]
+            print(f"10 fixed-length ({fixed_length}) samples from {space_name}: {samples}")
+        else:
+            print(f"10 samples from {space_name}: {samples}")
 
 
 if __name__ == "__main__":
