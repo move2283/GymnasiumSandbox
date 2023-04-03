@@ -53,6 +53,9 @@ class MyEnvironment:
         self.sequence_space_9 = spaces.Sequence(spaces.Box(0, 1), seed=42, stack=True)
         self.sequence_space_10 = spaces.Sequence(spaces.Discrete(10), seed=42)
 
+        # Add Graph space
+        self.graph_space = spaces.Graph(node_space=spaces.Box(low=-100, high=100, shape=(3,)), edge_space=spaces.Discrete(3), seed=42)
+
     def print_info(self, space_name):
         space = getattr(self, space_name)
         samples = [space.sample() for _ in range(10)]
@@ -64,6 +67,12 @@ class MyEnvironment:
         if isinstance(space, spaces.Box):
             is_bounded = space.is_bounded()
             print(f"Is {space_name} bounded? {is_bounded}")
+
+        if isinstance(space, spaces.Graph):
+            num_nodes = 10
+            num_edges = None
+            sample = space.sample(num_nodes=num_nodes, num_edges=num_edges)
+            print(f"Sample graph from {space_name} with {num_nodes} nodes and random number of edges:")
 
         if isinstance(space, spaces.Sequence):
             # Generate variable-length samples
