@@ -1,5 +1,5 @@
 import numpy as np
-from gymnasium import spaces
+from gym import spaces
 
 class MyEnvironment:
     def __init__(self):
@@ -11,12 +11,12 @@ class MyEnvironment:
 
 def print_info(env, space_name):
     space = getattr(env, space_name)
-    sample = space.sample()
-    print(f"Sampled value from {space_name}: {sample}")
+    samples = [space.sample() for _ in range(10)]
+    print(f"10 samples from {space_name}: {samples}")
 
     if space_name in ["action_space", "observation_space", "discrete_space"]:
-        is_valid = space.contains(sample)
-        print(f"Is {space_name[:-6]} valid? {is_valid}")
+        is_valid = [space.contains(sample) for sample in samples]
+        print(f"Are {space_name[:-6]} samples valid? {is_valid}")
 
     if isinstance(space, spaces.Box):
         is_bounded = space.is_bounded()
