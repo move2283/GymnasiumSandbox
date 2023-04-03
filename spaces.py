@@ -37,6 +37,10 @@ class MyEnvironment:
             }
         )
 
+        # Add Tuple spaces
+        self.tuple_space_1 = spaces.Tuple((spaces.Discrete(2), spaces.Box(-1, 1, shape=(2,))), seed=42)
+        self.tuple_space_2 = spaces.Tuple((spaces.MultiBinary(3), spaces.MultiDiscrete([5, 2, 2])), seed=42)
+
     def print_info(self, space_name):
         space = getattr(self, space_name)
         samples = [space.sample() for _ in range(10)]
