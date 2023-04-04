@@ -118,7 +118,7 @@ class MyEnvironment:
                 flattened_dimensions = flatdim(space)
                 print(f"Flat dimensions of {space_name}: {flattened_dimensions}")
 
-            except NotImplementedError as e:
+            except (NotImplementedError, ValueError) as e:  # Handle ValueError in addition to NotImplementedError
                 print(f"Flattening not implemented for {space_name}: {e}")
 
             print()
