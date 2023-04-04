@@ -70,8 +70,12 @@ class MyEnvironment:
         )
 
 
+class MyEnvironmentExamples:
+    def __init__(self, env: MyEnvironment):
+        self.env = env
+
     def print_info(self, space_name):
-        space = getattr(self, space_name)
+        space = getattr(self.env, space_name)
         samples = [space.sample() for _ in range(10)]
 
         if space_name in ["action_space", "observation_space", "discrete_space"]:
@@ -105,10 +109,10 @@ class MyEnvironment:
 
     def flatten_space_examples(self):
         spaces_to_flatten = [
-            ("box_space_1", self.box_space_1),
-            ("discrete_space", self.discrete_space),
-            ("dict_space_1", self.dict_space_1),
-            ("graph_space", self.graph_space),
+            ("box_space_1", self.env.box_space_1),
+            ("discrete_space", self.env.discrete_space),
+            ("dict_space_1", self.env.dict_space_1),
+            ("graph_space", self.env.graph_space),
         ]
 
         for space_name, space in spaces_to_flatten:
@@ -131,75 +135,70 @@ class MyEnvironment:
 
             print()
 
+    def batch_space_examples(self):
+        space = self.env.dict_space_1
+        n = 5
+        batched_space = batch_space(space, n)
+        print(f"Batched space for dict_space_1 with n={n}: {batched_space}")
 
-def batch_space_examples(env):
-    space = env.dict_space_1
-    n = 5
-    batched_space = batch_space(space, n)
-    print(f"Batched space for dict_space_1 with n={n}: {batched_space}")
+    def concatenate_examples(self):
+        space = self.env.box_space_2
+        out = np.zeros((2,) + space.shape, dtype=space.dtype)
+        items = [space.sample() for _ in range(2)]
+        concatenated_items = concatenate(space, items, out)
+        print(f"Concatenated samples for box_space_2: {concatenated_items}")
 
+    def iterate_examples(self):
+        supported_spaces = (spaces.Box, spaces.MultiBinary)
 
-def concatenate_examples(env):
-    space = env.box_space_2
-    out = np.zeros((2,) + space.shape, dtype=space.dtype)
-    items = [space.sample() for _ in range(2)]
-    concatenated_items = concatenate(space, items, out)
-    print(f"Concatenated samples for box_space_2: {concatenated_items}")
+        for space_name, space in vars(self.env).items():
+            if isinstance(space, supported_spaces):
+                items = space.sample()
+                iterator = iterate(space, items)
 
+                print(f"Iterated samples for {space_name}:")
+                for item in iterator:
+                    print(item)
+                print()
+            elif isinstance(space, (spaces.Discrete, spaces.MultiDiscrete, spaces.Dict)):
+                print(f"Skipping iteration for {space_name} (Discrete space)")
+                print()
 
-def iterate_examples(env):
-    supported_spaces = (spaces.Box, spaces.MultiBinary)
+    def create_empty_array_examples(self):
+        space = self.env.box_space_1
+        n = 2
+        empty_array = create_empty_array(space, n=n, fn=np.zeros)
+        print(f"Empty array for box_space_1 with n={n}: {empty_array}")
 
-    for space_name, space in vars(env).items():
-        if isinstance(space, supported_spaces):
-            items = space.sample()
-            iterator = iterate(space, items)
+    def create_shared_memory_examples(self):
+        space = self.env.box_space_1
+        n = 2
+        shared_memory = create_shared_memory(space, n=n)
+        print(f"Shared memory for box_space_1 with n={n}: {shared_memory}")
 
-            print(f"Iterated samples for {space_name}:")
-            for item in iterator:
-                print(item)
-            print()
-        elif isinstance(space, (spaces.Discrete, spaces.MultiDiscrete, spaces.Dict)):
-            print(f"Skipping iteration for {space_name} (Discrete space)")
-            print()
+    def read_from_shared_memory_examples(self):
+        space = self.env.box_space_1
+        n = 2
+        shared_memory = create_shared_memory(space, n=n)
+        observations = read_from_shared_memory(space, shared_memory, n=n)
+        print(f"Observations from shared memory for box_space_1 with n={n}: {observations}")
 
+    def run_all_examples(self):
+        for space_name, space in vars(self.env).items():
+            if isinstance(space, spaces.Space):
+                self.print_info(space_name)
+                print()
 
-def create_empty_array_examples(env):
-    space = env.box_space_1
-    n = 2
-    empty_array = create_empty_array(space, n=n, fn=np.zeros)
-    print(f"Empty array for box_space_1 with n={n}: {empty_array}")
-
-def create_shared_memory_examples(env):
-    space = env.box_space_1
-    n = 2
-    shared_memory = create_shared_memory(space, n=n)
-    print(f"Shared memory for box_space_1 with n={n}: {shared_memory}")
-
-def read_from_shared_memory_examples(env):
-    space = env.box_space_1
-    n = 2
-    shared_memory = create_shared_memory(space, n=n)
-    observations = read_from_shared_memory(space, shared_memory, n=n)
-    print(f"Observations from shared memory for box_space_1 with n={n}: {observations}")
+        self.flatten_space_examples()
+        self.batch_space_examples()
+        self.concatenate_examples()
+        self.iterate_examples()
+        self.create_empty_array_examples()
+        self.create_shared_memory_examples()
+        self.read_from_shared_memory_examples()
 
 
 if __name__ == "__main__":
     env = MyEnvironment()
-
-    for space_name, space in vars(env).items():
-        if isinstance(space, spaces.Space):
-            env.print_info(space_name)
-            print()
-
-    env.flatten_space_examples()
-
-    # Add examples for batch_space, concatenate, and iterate
-    batch_space_examples(env)
-    concatenate_examples(env)
-    iterate_examples(env)
-
-    # Add examples for create_empty_array, create_shared_memory, and read_from_shared_memory
-    create_empty_array_examples(env)
-    create_shared_memory_examples(env)
-    read_from_shared_memory_examples(env)
+    examples = MyEnvironmentExamples(env)
+    examples.run_all_examples()
