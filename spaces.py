@@ -2,6 +2,7 @@ import numpy as np
 from gymnasium import spaces
 import string  # Add this import
 from gymnasium.spaces.utils import flatten_space, flatten, flatdim, unflatten  # Add this import
+from gymnasium.vector.utils import batch_space, concatenate, iterate  # Add this import
 
 class MyEnvironment:
     def __init__(self):
@@ -124,6 +125,38 @@ class MyEnvironment:
             print()
 
 
+def batch_space_examples(env):
+    space = env.dict_space_1
+    n = 5
+    batched_space = batch_space(space, n)
+    print(f"Batched space for dict_space_1 with n={n}: {batched_space}")
+
+
+def concatenate_examples(env):
+    space = env.box_space_2
+    out = np.zeros((2,) + space.shape, dtype=space.dtype)
+    items = [space.sample() for _ in range(2)]
+    concatenated_items = concatenate(space, items, out)
+    print(f"Concatenated samples for box_space_2: {concatenated_items}")
+
+
+def iterate_examples(env):
+    supported_spaces = (spaces.Box, spaces.MultiBinary)
+
+    for space_name, space in vars(env).items():
+        if isinstance(space, supported_spaces):
+            items = space.sample()
+            iterator = iterate(space, items)
+
+            print(f"Iterated samples for {space_name}:")
+            for item in iterator:
+                print(item)
+            print()
+        elif isinstance(space, (spaces.Discrete, spaces.MultiDiscrete, spaces.Dict)):
+            print(f"Skipping iteration for {space_name} (Discrete space)")
+            print()
+
+
 if __name__ == "__main__":
     env = MyEnvironment()
 
@@ -133,3 +166,8 @@ if __name__ == "__main__":
             print()
 
     env.flatten_space_examples()
+
+    # Add examples for batch_space, concatenate, and iterate
+    batch_space_examples(env)
+    concatenate_examples(env)
+    iterate_examples(env)
