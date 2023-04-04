@@ -2,7 +2,14 @@ import numpy as np
 from gymnasium import spaces
 import string  # Add this import
 from gymnasium.spaces.utils import flatten_space, flatten, flatdim, unflatten  # Add this import
-from gymnasium.vector.utils import batch_space, concatenate, iterate  # Add this import
+from gymnasium.vector.utils import (
+    batch_space,
+    concatenate,
+    iterate,
+    create_empty_array,  # Add this import
+    create_shared_memory,  # Add this import
+    read_from_shared_memory,  # Add this import
+)
 
 class MyEnvironment:
     def __init__(self):
@@ -157,6 +164,26 @@ def iterate_examples(env):
             print()
 
 
+def create_empty_array_examples(env):
+    space = env.box_space_1
+    n = 2
+    empty_array = create_empty_array(space, n=n, fn=np.zeros)
+    print(f"Empty array for box_space_1 with n={n}: {empty_array}")
+
+def create_shared_memory_examples(env):
+    space = env.box_space_1
+    n = 2
+    shared_memory = create_shared_memory(space, n=n)
+    print(f"Shared memory for box_space_1 with n={n}: {shared_memory}")
+
+def read_from_shared_memory_examples(env):
+    space = env.box_space_1
+    n = 2
+    shared_memory = create_shared_memory(space, n=n)
+    observations = read_from_shared_memory(space, shared_memory, n=n)
+    print(f"Observations from shared memory for box_space_1 with n={n}: {observations}")
+
+
 if __name__ == "__main__":
     env = MyEnvironment()
 
@@ -171,3 +198,8 @@ if __name__ == "__main__":
     batch_space_examples(env)
     concatenate_examples(env)
     iterate_examples(env)
+
+    # Add examples for create_empty_array, create_shared_memory, and read_from_shared_memory
+    create_empty_array_examples(env)
+    create_shared_memory_examples(env)
+    read_from_shared_memory_examples(env)
