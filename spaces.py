@@ -1,6 +1,7 @@
 import numpy as np
 from gymnasium import spaces
 import string  # Add this import
+from gymnasium.spaces.utils import flatten_space, flatten, flatdim, unflatten  # Add this import
 
 class MyEnvironment:
     def __init__(self):
@@ -53,8 +54,13 @@ class MyEnvironment:
         self.sequence_space_9 = spaces.Sequence(spaces.Box(0, 1), seed=42, stack=True)
         self.sequence_space_10 = spaces.Sequence(spaces.Discrete(10), seed=42)
 
-        # Add Graph space
-        self.graph_space = spaces.Graph(node_space=spaces.Box(low=-100, high=100, shape=(3,)), edge_space=spaces.Discrete(3), seed=42)
+        # Add Graph space with fixed size
+        self.graph_space = spaces.Graph(
+            node_space=spaces.Box(low=-100, high=100, shape=(3,)),
+            edge_space=spaces.Discrete(3),
+            seed=42
+        )
+
 
     def print_info(self, space_name):
         space = getattr(self, space_name)
@@ -89,6 +95,34 @@ class MyEnvironment:
         else:
             print(f"10 samples from {space_name}: {samples}")
 
+    def flatten_space_examples(self):
+        spaces_to_flatten = [
+            ("box_space_1", self.box_space_1),
+            ("discrete_space", self.discrete_space),
+            ("dict_space_1", self.dict_space_1),
+            ("graph_space", self.graph_space),
+        ]
+
+        for space_name, space in spaces_to_flatten:
+            try:
+                flattened_space = flatten_space(space)
+                print(f"Flattened {space_name}: {flattened_space}")
+
+                sample = space.sample()
+                flattened_sample = flatten(space, sample)
+                print(f"Flattened sample of {space_name}: {flattened_sample}")
+
+                unflattened_sample = unflatten(space, flattened_sample)
+                print(f"Unflattened sample of {space_name}: {unflattened_sample}")
+
+                flattened_dimensions = flatdim(space)
+                print(f"Flat dimensions of {space_name}: {flattened_dimensions}")
+
+            except NotImplementedError as e:
+                print(f"Flattening not implemented for {space_name}: {e}")
+
+            print()
+
 
 if __name__ == "__main__":
     env = MyEnvironment()
@@ -97,3 +131,5 @@ if __name__ == "__main__":
         if isinstance(space, spaces.Space):
             env.print_info(space_name)
             print()
+
+    env.flatten_space_examples()
